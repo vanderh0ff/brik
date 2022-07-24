@@ -7,6 +7,7 @@ name = "pypi"
 pymongo = "*"
 flask = "*"
 openpyxl = "*"
+flask-mongoengine = "*"
 
 [dev-packages]
 
