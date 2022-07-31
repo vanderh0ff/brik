@@ -5,20 +5,6 @@ import os
 import sys
 import urllib.parse
 
-
-def insert_tasks_from_workbook(data_path):
-	username = urllib.parse.quote_plus('root')
-	password = urllib.parse.quote_plus('schooltime')
-	client = MongoClient('mongodb://%s:%s@127.0.0.1' % (username, password))
-	db = client.brik
-	collection = db.tasks
-	data_files = os.listdir(data_path)
-	for data_file in data_files:
-		tasks = extract_with_preprocess(os.path.join(data_path, data_file))
-		collection.insert_many(tasks)
-
-
-
 def extract_tasks(data_file):
     wb = load_workbook(filename=data_file, read_only=True)
     ws = wb.active
@@ -111,6 +97,7 @@ def extract_with_preprocess(data_file):
     chapter_bounds = find_value_bounds('Chapter', working_rows_values)
     chapters = split_by_bounds(chapter_bounds, working_rows_values)
     # extract tasks with lesson info
+    order = 0
     for chapter in chapters:
         current_lesson = ""
         for item in chapter[1:]:
@@ -123,6 +110,10 @@ def extract_with_preprocess(data_file):
                 "lesson": current_lesson,
                 "grade": grade,
                 "chapter": chapter[0],
-                "task": item
+                "task": item,
+                "completed": False,
+                "weight": 3 if ('lab' in item.lower()) else 1,
+                "order": order
                 })
+                order += 1
     return tasks
