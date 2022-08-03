@@ -81,9 +81,13 @@ def schedule_class_by_target_date(class_name: str, start_date_string: str, targe
     # of the week
     normalized_task_total = 0.0
     for x in range(number_of_days):
-        normalized_task_total += normalized_week[x%7]
+        date = start_date + datetime.timedelta(days=x)
+        normalized_task_total += normalized_week[date.weekday()]
     class_tasks = collection.find({'$and':[{'subject': class_name},{'completed':False}]})
     num_tasks = class_tasks.retrieved
+    tasks_per_day_unweighted = num_tasks / number_of_days
+    num_tasks / normalized_task_total
+    
 
 
 
