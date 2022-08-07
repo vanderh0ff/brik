@@ -1,5 +1,6 @@
 import datetime
-
+from pymongo import MongoClient
+db = MongoClient("")
 # how to schedule
 # see how many classes need to be done
 # see how many days each class has
@@ -7,24 +8,23 @@ import datetime
 # get start date
 
 
-def initialize_week():
+def initialize_week(class_name):
     week = {
         'monday': {'max_tasks': 12},
         'tuesday': {'max_tasks': 12},
         'wednesday': {'max_tasks': 12},
         'thursday': {'max_tasks': 12},
         'friday': {'max_tasks': 12},
-        'saturday': {'max_tasks': 12},
-        'sunday': {'max_tasks': 12}
+        'saturday': {'max_tasks': 0},
+        'sunday': {'max_tasks': 0}
     }
-    # get the db connection
-    for day in week:
-        db.week.insert_one({day: week[day]})
+    # set the class week in the db
+    db.classes.insert
 
 
 def get_class_week(class_name:str):
     this_class = db.classes.find_one({"name":class_name})
-    return this_class['week']
+    return list(map((lambda x: x['max_tasks']), this_class['week']))
 
 # differnt ways to schedule
 # have a target start and end date and evenly distribute tasks
@@ -69,13 +69,12 @@ def schedule_class_by_target_date(class_name: str, start_date_string: str, targe
     start_date = datetime.date.fromisoformat(start_date_string)
     target_date = datetime.date.fromisoformat(target_date_string)
     class_week = get_class_week(class_name)
-    # since we cant just use the values in the schedule we get an idea of the
-    # workload wanted on each day by dividing the max tasks per day against
-    # the sum of the weeks max tasks
-    normalized_week = normalize_week(class_week)
-    # we then get the number of days we want to finish in
     schedule_time_delta = target_date - start_date
     number_of_days = schedule_time_delta.days
+    total_task_value = 0
+    for day in range(delta_days.days):
+        current_day = start_date + datetime.timedelta(days=day)
+        total_task_value += class_week[current_day.weekday()]
     # then for each day we look up the normalized task weight for and add
     # it to a total so we can distribute the tasks to the weighted days
     # of the week
