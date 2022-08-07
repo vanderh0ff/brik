@@ -1,9 +1,10 @@
 import datetime
 import math
+import pprint
 
 fake_tasks = 100
 start_date = datetime.date.fromisoformat("2022-05-01")
-end_date = datetime.date.fromisoformat("2022-10-09")
+end_date = datetime.date.fromisoformat("2022-05-30")
 number_of_days = end_date - start_date
 weeks = math.ceil(number_of_days.days/7.0)
 
@@ -50,7 +51,11 @@ def gen_tasks(number_of_tasks:int):
         })
     return tasks
 
-
+def stack_tasks(start_date, class_name):
+    tasks_to_schedule = gen_tasks(fake_tasks)
+    task_week = list(map((lambda x: x['max_tasks']),class_week.values()))
+    
+    pass
 def distribute_tasks(start_date, end_date, class_name):
     # get class tasks and class weekday, we are using fake values for testing
     # real one will go and get from the db
@@ -72,4 +77,5 @@ def distribute_tasks(start_date, end_date, class_name):
 
 
 final = distribute_tasks(start_date, end_date, 'fake class')
-print(final)
+pprinter = pprint.PrettyPrinter()
+pprinter.pprint(final)
