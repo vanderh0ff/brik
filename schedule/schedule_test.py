@@ -47,13 +47,23 @@ def gen_tasks(number_of_tasks:int):
     tasks = []
     for task_number in range(number_of_tasks):
         tasks.append({
-          'id': task_number  
+          'id': task_number,
+          'weight': 1
         })
     return tasks
 
 def stack_tasks(start_date, class_name):
     tasks_to_schedule = gen_tasks(fake_tasks)
     task_week = list(map((lambda x: x['max_tasks']),class_week.values()))
+    current_day = start_date
+    current_weight = 0
+    for x in range(len(tasks_to_schedule)):
+        current_weight += tasks_to_schedule[x]['weight']
+        while current_weight > task_week[current_day.weekday()]:
+            current_weight -= task_week[current_day.weekday()]
+            current_day = current_day + datetime.timedelta(days=1)
+        tasks_to_schedule[x]['scheduled_for'] = current_day
+    return tasks_to_schedule
     
     pass
 def distribute_tasks(start_date, end_date, class_name):
@@ -76,6 +86,7 @@ def distribute_tasks(start_date, end_date, class_name):
     return tasks_to_schedule
 
 
-final = distribute_tasks(start_date, end_date, 'fake class')
+#final = distribute_tasks(start_date, end_date, 'fake class')
+final = stack_tasks(start_date, 'fake class')
 pprinter = pprint.PrettyPrinter()
 pprinter.pprint(final)
