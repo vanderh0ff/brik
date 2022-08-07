@@ -39,8 +39,6 @@ class_week = {
     'sunday': {"max_tasks": 0}
 }
 
-
-
 # i need to take this normailzed week and map it to the entire school range then distribute the tasks
 
 def gen_tasks(number_of_tasks:int):
@@ -65,7 +63,6 @@ def stack_tasks(start_date, class_name):
         tasks_to_schedule[x]['scheduled_for'] = current_day
     return tasks_to_schedule
     
-    pass
 def distribute_tasks(start_date, end_date, class_name):
     # get class tasks and class weekday, we are using fake values for testing
     # real one will go and get from the db
@@ -78,11 +75,11 @@ def distribute_tasks(start_date, end_date, class_name):
     tts = total_task_span(start_date, end_date, class_week)
     task_increment = tts/fake_tasks
     for n in range(len(tasks_to_schedule)):
-        tasks_to_schedule[n]['scheduled_for'] = current_day
         task_weight_counter += task_increment
         while task_weight_counter >= task_week[current_day.weekday()]:
             task_weight_counter -= task_week[current_day.weekday()]
             current_day = current_day + datetime.timedelta(days=1)
+        tasks_to_schedule[n]['scheduled_for'] = current_day
     return tasks_to_schedule
 
 
