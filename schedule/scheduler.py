@@ -87,12 +87,6 @@ def schedule_class_by_target_date(class_name: str, start_date_string: str, targe
     tasks_per_day_unweighted = num_tasks / number_of_days
     num_tasks / normalized_task_total
     
-
-
-
-
-
-
 def get_this_weeks_schedule():
     query = {
         'scheduled_for': {
